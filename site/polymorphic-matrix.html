@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Polymorphic Matrix - Sophie's Design Patterns</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <header class="bg-blue-900 text-white py-4">
+    <div class="container mx-auto px-4">
+      <h1 class="text-2xl font-bold">🧩 Polymorphic Matrix</h1>
+      <nav class="mt-2">
+        <a href="index.html" class="mr-4 underline">Home</a>
+        <a href="patterns.html" class="underline">All Patterns</a>
+      </nav>
+    </div>
+  </header>
+  <main class="container mx-auto px-4 py-8">
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Intent</h2>
+      <p>This pattern allows an application to dynamically select a behavior based on two runtime types and a contextual behavior, replacing the Visitor pattern or nested conditionals.</p>
+    </section>
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Structure</h2>
+      <p>A matrix maps a triplet (Type A, Type B, Behavior) to an associated function to execute.</p>
+    </section>
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Advantages</h2>
+      <ul class="list-disc pl-6">
+        <li>Readable, testable, and declarative</li>
+        <li>Respects the Open/Closed Principle</li>
+        <li>Avoids Visitor complexity, switch, and instanceof</li>
+      </ul>
+    </section>
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Java Example</h2>
+      <pre class="bg-white border border-gray-300 rounded p-4 overflow-x-auto text-sm"><code>matrix.register(Cat.class, Fish.class, BehaviorType.EAT,
+    (cat, fish) -> "The cat eats the fish.");
+
+matrix.apply(new Cat(), new Fish(), BehaviorType.EAT);</code></pre>
+    </section>
+  </main>
+  <footer class="text-center text-sm text-gray-500 py-4">
+    &copy; 2025 Sophie LE CORRE — All rights reserved.
+  </footer>
+</body>
+</html>
