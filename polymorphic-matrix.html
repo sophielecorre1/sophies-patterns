@@ -19,26 +19,70 @@
   <main class="container mx-auto px-4 py-8">
     <section class="mb-8">
       <h2 class="text-xl font-semibold text-blue-900 mb-4">Intent</h2>
-      <p>This pattern allows an application to dynamically select a behavior based on two runtime types and a contextual behavior, replacing the Visitor pattern or nested conditionals.</p>
+      <p>Enable behavior selection based on a combination of two runtime types and a behavior context, in a way that is declarative, extensible, and avoids the verbosity and asymmetry of the Visitor pattern.</p>
     </section>
+
     <section class="mb-8">
-      <h2 class="text-xl font-semibold text-blue-900 mb-4">Structure</h2>
-      <p>A matrix maps a triplet (Type A, Type B, Behavior) to an associated function to execute.</p>
-    </section>
-    <section class="mb-8">
-      <h2 class="text-xl font-semibold text-blue-900 mb-4">Advantages</h2>
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Also Known As</h2>
       <ul class="list-disc pl-6">
-        <li>Readable, testable, and declarative</li>
-        <li>Respects the Open/Closed Principle</li>
-        <li>Avoids Visitor complexity, switch, and instanceof</li>
+        <li>Multi-Type Dispatch Table</li>
+        <li>Behavioral Matrix</li>
+        <li>Symmetric Strategy Grid</li>
       </ul>
     </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Motivation</h2>
+      <p>Traditional polymorphism supports dispatch based on a single dynamic type. However, real-world problems often require logic that depends on two interacting types and a context. The Visitor pattern simulates double dispatch but is verbose, asymmetrical, and scales poorly when new types or behaviors are introduced.</p>
+      <p>The Polymorphic Matrix externalizes this logic into a data structure that can be queried at runtime to resolve the appropriate behavior cleanly.</p>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Structure</h2>
+      <img src="polymorphic_matrix_uml.png" alt="UML class diagram of Polymorphic Matrix pattern" class="my-4 border rounded">
+      <p>The core structure consists of:</p>
+      <ul class="list-disc pl-6">
+        <li><strong>Type A</strong> and <strong>Type B</strong>: the dynamic participants (e.g. Animal and Food)</li>
+        <li><strong>BehaviorType</strong>: the context of interaction (e.g. EAT, SNIFF)</li>
+        <li><strong>PolymorphicMatrix</strong>: a registry mapping (A, B, BehaviorType) to an action function</li>
+        <li><strong>Action</strong>: the business logic to execute</li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Participants</h2>
+      <ul class="list-disc pl-6">
+        <li><strong>A</strong>: First participant in the interaction (e.g. Animal)</li>
+        <li><strong>B</strong>: Second participant (e.g. Food)</li>
+        <li><strong>BehaviorType</strong>: The kind of behavior applied (e.g. EAT)</li>
+        <li><strong>PolymorphicMatrix</strong>: Holds and resolves the behavior function</li>
+        <li><strong>Action</strong>: A function executed for a given triplet</li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Consequences</h2>
+      <ul class="list-disc pl-6">
+        <li>✅ Clean separation of behavior logic from domain types</li>
+        <li>✅ Fully extensible without modifying existing types</li>
+        <li>✅ Avoids the rigidity and verbosity of Visitor</li>
+        <li>⚠️ May grow large if combinations are numerous</li>
+        <li>⚠️ Requires explicit registration of all valid cases</li>
+      </ul>
+    </section>
+
     <section class="mb-8">
       <h2 class="text-xl font-semibold text-blue-900 mb-4">Java Example</h2>
       <pre class="bg-white border border-gray-300 rounded p-4 overflow-x-auto text-sm"><code>matrix.register(Cat.class, Fish.class, BehaviorType.EAT,
     (cat, fish) -> "The cat eats the fish.");
 
 matrix.apply(new Cat(), new Fish(), BehaviorType.EAT);</code></pre>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Sequence Diagram</h2>
+      <img src="polymorphic_matrix_sequence_final.svg" alt="UML sequence diagram of Polymorphic Matrix apply call" class="my-4 border rounded">
+      <p>This sequence diagram illustrates how a client invokes the <code>apply()</code> method on the <code>PolymorphicMatrix</code>, which looks up the appropriate <code>Action</code> and delegates execution, returning the result.</p>
     </section>
   </main>
   <footer class="text-center text-sm text-gray-500 py-4">
