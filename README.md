@@ -15,7 +15,7 @@ Each pattern is documented with:
 
 ## ✨ Featured Pattern
 
-### [Polymorphic Matrix](https://github.com/sophielecorre1/sophies-patterns/polymorphic-matrix.html)
+### [Polymorphic Matrix](https://sophielecorre1.github.io/sophies-patterns/polymorphic-matrix.html)
 
 A clean alternative to the Visitor pattern and `switch`/`instanceof` blocks when dealing with logic based on two dynamic types.
 
