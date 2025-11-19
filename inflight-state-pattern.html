@@ -90,7 +90,17 @@ public void finalize(Long id, SmsResult result) {
     middleware.notify(result);
 }</code></pre>
     </section>
-
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Sequence Diagram</h2>
+      <div class="my-4 border rounded bg-white p-4">
+        <img 
+          src="in_flight_manual.svg" 
+          alt="Sequence diagram of the In-Flight State Pattern showing the three phases: Guard (REQUIRES_NEW), External Call (non-retryable), and Finalization (retryable via Spring Retry)" 
+          class="w-full"
+        />
+      </div>
+      <p>This diagram illustrates the three-phase execution of the In-Flight State Pattern: the pre-commit guard transition, the single external action, and the retryable finalization phase.</p>
+    </section>
   </main>
 
   <footer class="text-center text-sm text-gray-500 py-4">
