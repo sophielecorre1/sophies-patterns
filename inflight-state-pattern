@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>In-Flight State Pattern - Sophie's Design Patterns</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800">
+  <header class="bg-blue-900 text-white py-4">
+    <div class="container mx-auto px-4">
+      <h1 class="text-2xl font-bold">🛫 In-Flight State Pattern</h1>
+      <nav class="mt-2">
+        <a href="index.html" class="mr-4 underline">Home</a>
+        <a href="patterns.html" class="mr-4 underline">Patterns</a>
+        <a href="about.html" class="underline">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container mx-auto px-4 py-8">
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Intent</h2>
+      <p>Guarantee <strong>exactly-once</strong> execution for external side effects (HTTP calls, emails, SMS, webhooks) while allowing <strong>at-least-once</strong> retry for internal operations (database writes, middleware notifications). Achieve this by introducing a persistent "in-flight" state that acts as a transactional barrier.</p>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Also Known As</h2>
+      <ul class="list-disc pl-6">
+        <li>Transactional Guard State</li>
+        <li>Pending Execution Marker</li>
+        <li>Two-Phase Action State</li>
+        <li>In-Progress Lock Pattern</li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Motivation</h2>
+      <p>Many systems must perform an external operation (like sending an SMS) exactly once, but a failure after that operation may require retrying internal logic (database updates, monitoring events). Traditional transaction boundaries do not fit: rolling back the transaction would re-trigger the external call.</p>
+      <p>The In-Flight State Pattern solves this by separating the workflow into <strong>three explicit phases</strong> with isolated transactional behavior.</p>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Structure</h2>
+      <p>The system transitions through three phases:</p>
+      <ul class="list-disc pl-6">
+        <li><strong>Phase 1 — Guard:</strong> Move from INITIAL → IN_FLIGHT with <code>REQUIRES_NEW</code> to commit the state immediately.</li>
+        <li><strong>Phase 2 — External Action:</strong> Perform the side effect (HTTP/SMS). Never retried automatically.</li>
+        <li><strong>Phase 3 — Finalization:</strong> Update internal state and send notifications. Fully retryable.</li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Participants</h2>
+      <ul class="list-disc pl-6">
+        <li><strong>Domain Entity</strong>: Holds the persistent state (INITIAL → IN_FLIGHT → DONE).</li>
+        <li><strong>Guard Service</strong>: Moves the entity into IN_FLIGHT using an isolated transaction.</li>
+        <li><strong>External Client</strong>: Performs the non-idempotent external call.</li>
+        <li><strong>Finalizer Service</strong>: Writes final status, retryable.</li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Consequences</h2>
+      <ul class="list-disc pl-6">
+        <li>✅ Prevents duplicate external calls</li>
+        <li>✅ Allows robust retry of internal logic</li>
+        <li>✅ Crash-safe thanks to early commit</li>
+        <li>⚠️ Requires a cleanup job for stuck IN_FLIGHT rows</li>
+        <li>⚠️ Slightly more complex state machine</li>
+      </ul>
+    </section>
+
+    <section class="mb-8">
+      <h2 class="text-xl font-semibold text-blue-900 mb-4">Java Example</h2>
+      <pre class="bg-white border border-gray-300 rounded p-4 overflow-x-auto text-sm"><code>@Transactional(propagation = REQUIRES_NEW)
+public void markInFlight(Long id) {
+    repo.updateStatus(id, IN_FLIGHT, INITIAL);
+}
+
+public SmsResult sendOnce(Appointment item) {
+    return smsClient.send(item); // never retried
+}
+
+@Retryable(maxAttempts = 3)
+@Transactional
+public void finalize(Long id, SmsResult result) {
+    repo.updateStatus(id, DONE, result.reference());
+    middleware.notify(result);
+}</code></pre>
+    </section>
+
+  </main>
+
+  <footer class="text-center text-sm text-gray-500 py-4">
+    &copy; 2025 Sophie LE CORRE — All rights reserved.
+  </footer>
+</body>
+</html>
